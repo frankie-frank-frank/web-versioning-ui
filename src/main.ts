@@ -4,16 +4,10 @@ import App from './App.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
 // Import your components
-import GetStarted from './components/GetStarted.vue';
-import Steppers from "./components/SteppersComponent.vue";
-import SuccessComponent from './components/SuccessComponent.vue';
-import GetStartedBanner from './components/GetStartedBanner.vue';
+import CalendarModal from './components/CalendarModal.vue';
 
 const routes = [
-  { path: "/", component: GetStarted },
-  { path: "/steppers", component: Steppers },
-  { path: "/success", component: SuccessComponent },
-  { path: "/banner", component: GetStartedBanner },
+  { path: "/", component: CalendarModal },
 ];
 
 const router = createRouter({
