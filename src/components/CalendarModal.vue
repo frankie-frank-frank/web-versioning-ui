@@ -1,28 +1,13 @@
 <template>
-  <!-- <div>
-    <button @click="toggleDatePickerVisibility">
-      {{ appliedDateRange }}
-      <span v-if="appliedHasBookedDaysInRange"> ({{ appliedBookedDaysCount }} booked days)</span>
-    </button>
-    <br><br> -->
     <div>
-    <button @click="toggleDatePickerVisibility" style=" display: flex; align-items: center; border-radius: 6px;
-border: 1px solid var(--Grey-200, #E6E7E8); padding: 8px;
-background: var(--Grey-White, #FFF);
-box-shadow: 0px 1px 2px 0px rgba(26, 40, 53, 0.09);color: var(--Grey-800, #34404B);
-
-font-size: 13px;
-font-style: normal;
-font-weight: 600;
-line-height: 20px; /* 142.857% */
-letter-spacing: -0.05px; cursor: pointer;">
+    <button @click="toggleDatePickerVisibility" class="new_calendar_toggle_button" style=" ">
 <svg style="margin-right: 10px;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
 <path d="M7.25 17.5534V17.4688M12.3125 17.5534V17.4688M12.3125 12.9688V12.8842M16.8125 12.9688V12.8842M3.875 8.46875H19.625M5.91071 2V3.68771M17.375 2V3.6875M17.375 3.6875H6.125C4.26104 3.6875 2.75 5.19854 2.75 7.0625V18.3126C2.75 20.1766 4.26104 21.6876 6.125 21.6876H17.375C19.239 21.6876 20.75 20.1766 20.75 18.3126L20.75 7.0625C20.75 5.19854 19.239 3.6875 17.375 3.6875Z" stroke="#4D5861" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
       {{ appliedDateRange }}
       <span class="calendar_toggle_btn" v-if="appliedHasBookedDaysInRange"> &lt;/&gt; {{ appliedBookedDaysCount }}</span>
     </button>
-    <br>
+    
     <div class="new_calendar_date_range_picker" v-show="showDatePicker">
       <div class="new_calendar_header">
         <div class="new_calendar_input_wrapper">
@@ -133,7 +118,7 @@ export default {
     const startDate = ref(null);
     const endDate = ref(null);
     const dateRange = ref('');
-    const appliedDateRange = ref(''); // New state variable to hold the applied date range
+    const appliedDateRange = ref('');
     const today = new Date();
 
     const startMonthIndex = ref(today.getMonth());
@@ -165,7 +150,7 @@ export default {
       startDate.value = start;
       endDate.value = end;
       dateRange.value = `${formatDate(start)} - ${formatDate(end)}`;
-      appliedDateRange.value = dateRange.value; // Initialize appliedDateRange
+      appliedDateRange.value = dateRange.value;
       updateBookedDaysCount();
     });
 
@@ -277,7 +262,7 @@ export default {
 
     const applyDateRange = () => {
       showDatePicker.value = false;
-      appliedDateRange.value = dateRange.value; // Update appliedDateRange when user clicks apply
+      appliedDateRange.value = dateRange.value;
       updateAppliedBookedDaysCount();
     };
 
@@ -289,7 +274,7 @@ export default {
     };
 
     const bookedDaysCount = ref(0);
-    const appliedBookedDaysCount = ref(0); // New state variable to hold the applied booked days count
+    const appliedBookedDaysCount = ref(0);
 
     const updateBookedDaysCount = () => {
       if (!startDate.value || !endDate.value) {
@@ -324,7 +309,7 @@ export default {
     };
 
     const hasBookedDaysInRange = computed(() => bookedDaysCount.value > 0);
-    const appliedHasBookedDaysInRange = computed(() => appliedBookedDaysCount.value > 0); // New computed property for applied booked days
+    const appliedHasBookedDaysInRange = computed(() => appliedBookedDaysCount.value > 0);
 
     return {
       showDatePicker,
@@ -384,6 +369,19 @@ export default {
   border-radius: 8px;
   padding: 10px;
   background-color: #fff;
+}
+
+.new_calendar_toggle_button{
+  display: flex; align-items: center; border-radius: 6px; margin-bottom: 10px;
+border: 1px solid var(--Grey-200, #E6E7E8); padding: 8px;
+background: var(--Grey-White, #FFF);
+box-shadow: 0px 1px 2px 0px rgba(26, 40, 53, 0.09);color: var(--Grey-800, #34404B);
+
+font-size: 13px;
+font-style: normal;
+font-weight: 600;
+line-height: 20px; /* 142.857% */
+letter-spacing: -0.05px; cursor: pointer;
 }
 
 .calendar_toggle_btn{
@@ -492,7 +490,6 @@ border-radius: 4px;
   border-radius: 4px;
   border: 1px solid var(--Grey-200, #E6E7E8);
   background: var(--Grey-White, #FFF);
-  /* Shadows/XS */
   box-shadow: 0px 1px 2px 0px rgba(26, 40, 53, 0.09);
   padding: 8px;
 }
@@ -553,7 +550,7 @@ border-radius: 4px;
   align-items: center;
   gap: 20px;
   flex-shrink: 0;
-  background: var(--Info-03-Main, #449FF4);
+  background: #449FF4;
   color: #FFF;
   position: relative;
 }
