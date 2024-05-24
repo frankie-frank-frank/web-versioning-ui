@@ -309,6 +309,20 @@ export default {
       appliedBookedDaysCount.value = count;
     };
 
+    const handleDateInput = (event) => {
+      const input = event.target.value;
+      const dates = input.split(' - ');
+      if (dates.length === 2) {
+        const start = new Date(dates[0]);
+        const end = new Date(dates[1]);
+        if (!isNaN(start) && !isNaN(end)) {
+          startDate.value = start;
+          endDate.value = end;
+          updateBookedDaysCount();
+        }
+      }
+    };
+
     const hasBookedDaysInRange = computed(() => bookedDaysCount.value > 0);
     const appliedHasBookedDaysInRange = computed(() => appliedBookedDaysCount.value > 0); // New computed property for applied booked days
 
@@ -351,7 +365,8 @@ export default {
       updateBookedDaysCount,
       updateAppliedBookedDaysCount,
       hasBookedDaysInRange,
-      appliedHasBookedDaysInRange
+      appliedHasBookedDaysInRange,
+      handleDateInput
     };
   }
 };
