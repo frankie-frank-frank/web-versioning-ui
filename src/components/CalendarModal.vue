@@ -11,18 +11,18 @@ border: 1px solid var(--Grey-200, #E6E7E8); padding: 8px;
 background: var(--Grey-White, #FFF);
 box-shadow: 0px 1px 2px 0px rgba(26, 40, 53, 0.09);color: var(--Grey-800, #34404B);
 
-font-size: 14px;
+font-size: 13px;
 font-style: normal;
 font-weight: 600;
 line-height: 20px; /* 142.857% */
 letter-spacing: -0.05px; cursor: pointer;">
-<svg style="margin-right: 10px;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+<svg style="margin-right: 10px;" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
 <path d="M7.25 17.5534V17.4688M12.3125 17.5534V17.4688M12.3125 12.9688V12.8842M16.8125 12.9688V12.8842M3.875 8.46875H19.625M5.91071 2V3.68771M17.375 2V3.6875M17.375 3.6875H6.125C4.26104 3.6875 2.75 5.19854 2.75 7.0625V18.3126C2.75 20.1766 4.26104 21.6876 6.125 21.6876H17.375C19.239 21.6876 20.75 20.1766 20.75 18.3126L20.75 7.0625C20.75 5.19854 19.239 3.6875 17.375 3.6875Z" stroke="#4D5861" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
       {{ appliedDateRange }}
       <span class="calendar_toggle_btn" v-if="appliedHasBookedDaysInRange"> &lt;/&gt; {{ appliedBookedDaysCount }}</span>
     </button>
-    <br><br>
+    <br>
     <div class="new_calendar_date_range_picker" v-show="showDatePicker">
       <div class="new_calendar_header">
         <div class="new_calendar_input_wrapper">
@@ -224,9 +224,10 @@ export default {
 
     const selectDate = (day, monthIndex) => {
       const selectedDate = new Date(startYear.value, monthIndex, day);
-      if (!startDate.value || (startDate.value && endDate.value)) {
+      if (!startDate.value || endDate.value) {
         startDate.value = selectedDate;
         endDate.value = null;
+        dateRange.value = `${formatDate(startDate.value)} - --/--/----`;
       } else if (startDate.value && !endDate.value) {
         if (selectedDate < startDate.value) {
           endDate.value = startDate.value;
@@ -234,18 +235,19 @@ export default {
         } else {
           endDate.value = selectedDate;
         }
+        dateRange.value = `${formatDate(startDate.value)} - ${formatDate(endDate.value)}`;
       }
-      dateRange.value = `${formatDate(startDate.value)} - ${formatDate(endDate.value || startDate.value)}`;
-      updateBookedDaysCount(); // Update immediately for immediate count display
+      updateBookedDaysCount();
     };
 
-    const selectToday = () => {
+      const selectToday = () => {
       const today = new Date();
       startDate.value = today;
-      endDate.value = today;
-      dateRange.value = `${formatDate(today)} - ${formatDate(today)}`;
-      updateBookedDaysCount(); // Update immediately for immediate count display
+      endDate.value = null;
+      dateRange.value = `${formatDate(today)} - --/--/----`;
+      updateBookedDaysCount();
     };
+
 
     const prevMonth = () => {
       startMonthIndex.value -= 1;
@@ -373,7 +375,7 @@ export default {
 display: unset !important;
 border-radius: 4px;
   background: #449ff4;
-  padding: 3px 7px;
+  padding: 2px 7px;
   font-size: 12px;
   color: #fff;
   font-weight: 700;
