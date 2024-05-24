@@ -1,6 +1,28 @@
 <template>
-  <div>
-    <button @click="toggleDatePickerVisibility">{{ appliedDateRange }}</button> <br><br>
+  <!-- <div>
+    <button @click="toggleDatePickerVisibility">
+      {{ appliedDateRange }}
+      <span v-if="appliedHasBookedDaysInRange"> ({{ appliedBookedDaysCount }} booked days)</span>
+    </button>
+    <br><br> -->
+    <div>
+    <button @click="toggleDatePickerVisibility" style=" display: flex; align-items: center; border-radius: 6px;
+border: 1px solid var(--Grey-200, #E6E7E8); padding: 8px;
+background: var(--Grey-White, #FFF);
+box-shadow: 0px 1px 2px 0px rgba(26, 40, 53, 0.09);color: var(--Grey-800, #34404B);
+
+font-size: 14px;
+font-style: normal;
+font-weight: 600;
+line-height: 20px; /* 142.857% */
+letter-spacing: -0.05px; cursor: pointer;">
+<svg style="margin-right: 10px;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+<path d="M7.25 17.5534V17.4688M12.3125 17.5534V17.4688M12.3125 12.9688V12.8842M16.8125 12.9688V12.8842M3.875 8.46875H19.625M5.91071 2V3.68771M17.375 2V3.6875M17.375 3.6875H6.125C4.26104 3.6875 2.75 5.19854 2.75 7.0625V18.3126C2.75 20.1766 4.26104 21.6876 6.125 21.6876H17.375C19.239 21.6876 20.75 20.1766 20.75 18.3126L20.75 7.0625C20.75 5.19854 19.239 3.6875 17.375 3.6875Z" stroke="#4D5861" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+      {{ appliedDateRange }}
+      <span class="calendar_toggle_btn" v-if="appliedHasBookedDaysInRange"> &lt;/&gt; {{ appliedBookedDaysCount }}</span>
+    </button>
+    <br><br>
     <div class="new_calendar_date_range_picker" v-show="showDatePicker">
       <div class="new_calendar_header">
         <div class="new_calendar_input_wrapper">
@@ -103,7 +125,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 export default {
   setup() {
@@ -178,84 +200,18 @@ export default {
     };
 
     const isStartDate = (day, monthIndex) => {
-      const date = new Date(startYear.value, monthIndex, day);
-      return startDate.value && date.getTime() === startDate.value.getTime();
+      const selectedDate = new Date(startYear.value, monthIndex, day);
+      return startDate.value && selectedDate.getTime() === startDate.value.getTime();
     };
 
     const isEndDate = (day, monthIndex) => {
-      const date = new Date(startYear.value, monthIndex, day);
-      return endDate.value && date.getTime() === endDate.value.getTime();
+      const selectedDate = new Date(startYear.value, monthIndex, day);
+      return endDate.value && selectedDate.getTime() === endDate.value.getTime();
     };
 
     const isBooked = (day, monthIndex) => {
-      return bookedDates.value.some(bookedDate => {
-        return bookedDate.getDate() === day && bookedDate.getMonth() === monthIndex && bookedDate.getFullYear() === startYear.value;
-      });
-    };
-
-    const selectDate = (day, monthIndex) => {
       const selectedDate = new Date(startYear.value, monthIndex, day);
-      if (!startDate.value || endDate.value) {
-        startDate.value = selectedDate;
-        endDate.value = null;
-        dateRange.value = `${formatDate(startDate.value)} - --/--/----`;
-      } else if (startDate.value && !endDate.value) {
-        if (selectedDate < startDate.value) {
-          endDate.value = startDate.value;
-          startDate.value = selectedDate;
-        } else {
-          endDate.value = selectedDate;
-        }
-        dateRange.value = `${formatDate(startDate.value)} - ${formatDate(endDate.value)}`;
-      }
-      updateBookedDaysCount();
-    };
-
-    const updateBookedDaysCount = () => {
-      if (!startDate.value || !endDate.value) {
-        bookedDaysCount.value = 0;
-        return;
-      }
-      const bookedCount = bookedDates.value.filter(date => {
-        return date >= startDate.value && date <= endDate.value;
-      }).length;
-      bookedDaysCount.value = bookedCount;
-    };
-
-    const bookedDaysCount = ref(0);
-
-    const prevMonth = () => {
-      if (startMonthIndex.value > 0) {
-        startMonthIndex.value--;
-      } else {
-        startMonthIndex.value = 11;
-        startYear.value--;
-      }
-    };
-
-    const nextMonth = () => {
-      if (startMonthIndex.value < 11) {
-        startMonthIndex.value++;
-      } else {
-        startMonthIndex.value = 0;
-        startYear.value++;
-      }
-    };
-
-    const selectToday = () => {
-      const today = new Date();
-      startMonthIndex.value = today.getMonth();
-      startYear.value = today.getFullYear();
-      startDate.value = today;
-      const end = new Date(today);
-      end.setDate(end.getDate() + 7);
-      endDate.value = end;
-      dateRange.value = `${formatDate(startDate.value)} - ${formatDate(endDate.value)}`;
-      updateBookedDaysCount();
-    };
-
-    const formatDate = (date) => {
-      return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+      return bookedDates.value.some(date => date.getTime() === selectedDate.getTime());
     };
 
     const showTooltip = (index) => {
@@ -266,40 +222,113 @@ export default {
       tooltipVisible.value[index] = false;
     };
 
-    const handleDateInput = (event) => {
-      const input = event.target.value;
-      const dates = input.split(' - ');
-      if (dates.length === 2) {
-        const start = new Date(dates[0]);
-        const end = new Date(dates[1]);
-        if (!isNaN(start) && !isNaN(end)) {
-          startDate.value = start;
-          endDate.value = end;
-          updateBookedDaysCount();
+    const selectDate = (day, monthIndex) => {
+      const selectedDate = new Date(startYear.value, monthIndex, day);
+      if (!startDate.value || (startDate.value && endDate.value)) {
+        startDate.value = selectedDate;
+        endDate.value = null;
+      } else if (startDate.value && !endDate.value) {
+        if (selectedDate < startDate.value) {
+          endDate.value = startDate.value;
+          startDate.value = selectedDate;
+        } else {
+          endDate.value = selectedDate;
         }
+      }
+      dateRange.value = `${formatDate(startDate.value)} - ${formatDate(endDate.value || startDate.value)}`;
+      updateBookedDaysCount(); // Update immediately for immediate count display
+    };
+
+    const selectToday = () => {
+      const today = new Date();
+      startDate.value = today;
+      endDate.value = today;
+      dateRange.value = `${formatDate(today)} - ${formatDate(today)}`;
+      updateBookedDaysCount(); // Update immediately for immediate count display
+    };
+
+    const prevMonth = () => {
+      startMonthIndex.value -= 1;
+      if (startMonthIndex.value < 0) {
+        startMonthIndex.value = 11;
+        startYear.value -= 1;
+      }
+      endMonthIndex.value = startMonthIndex.value + 1;
+      if (endMonthIndex.value > 11) {
+        endMonthIndex.value -= 12;
+        endYear.value += 1;
+      }
+    };
+
+    const nextMonth = () => {
+      startMonthIndex.value += 1;
+      if (startMonthIndex.value > 11) {
+        startMonthIndex.value = 0;
+        startYear.value += 1;
+      }
+      endMonthIndex.value = startMonthIndex.value + 1;
+      if (endMonthIndex.value > 11) {
+        endMonthIndex.value -= 12;
+        endYear.value += 1;
       }
     };
 
     const applyDateRange = () => {
-      appliedDateRange.value = dateRange.value; // Update appliedDateRange on apply
       showDatePicker.value = false;
+      appliedDateRange.value = dateRange.value; // Update appliedDateRange when user clicks apply
+      updateAppliedBookedDaysCount();
     };
+
+    const formatDate = (date) => {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${month}/${day}/${year}`;
+    };
+
+    const bookedDaysCount = ref(0);
+    const appliedBookedDaysCount = ref(0); // New state variable to hold the applied booked days count
+
+    const updateBookedDaysCount = () => {
+      if (!startDate.value || !endDate.value) {
+        bookedDaysCount.value = 0;
+        return;
+      }
+      const count = bookedDates.value.filter(date => date >= startDate.value && date <= endDate.value).length;
+      bookedDaysCount.value = count;
+    };
+
+    const updateAppliedBookedDaysCount = () => {
+      if (!startDate.value || !endDate.value) {
+        appliedBookedDaysCount.value = 0;
+        return;
+      }
+      const count = bookedDates.value.filter(date => date >= startDate.value && date <= endDate.value).length;
+      appliedBookedDaysCount.value = count;
+    };
+
+    const hasBookedDaysInRange = computed(() => bookedDaysCount.value > 0);
+    const appliedHasBookedDaysInRange = computed(() => appliedBookedDaysCount.value > 0); // New computed property for applied booked days
 
     return {
       showDatePicker,
       startDate,
       endDate,
       dateRange,
-      appliedDateRange, // Return appliedDateRange
-      startMonth,
-      endMonth,
-      dayNames,
-      daysInMonth,
+      appliedDateRange,
+      today,
       startMonthIndex,
       startYear,
       endMonthIndex,
       endYear,
+      dayNames,
+      monthNames,
+      startMonth,
+      endMonth,
       bookedDates,
+      tooltipVisible,
+      toggleDatePickerVisibility,
+      daysInMonth,
       toggleDatePicker,
       clearDates,
       isSelected,
@@ -307,20 +336,22 @@ export default {
       isStartDate,
       isEndDate,
       isBooked,
-      selectDate,
-      bookedDaysCount,
-      prevMonth,
-      nextMonth,
-      selectToday,
-      formatDate,
-      toggleDatePickerVisibility,
-      tooltipVisible,
       showTooltip,
       hideTooltip,
-      handleDateInput,
+      selectDate,
+      selectToday,
+      prevMonth,
+      nextMonth,
       applyDateRange,
+      formatDate,
+      bookedDaysCount,
+      appliedBookedDaysCount,
+      updateBookedDaysCount,
+      updateAppliedBookedDaysCount,
+      hasBookedDaysInRange,
+      appliedHasBookedDaysInRange
     };
-  },
+  }
 };
 </script>
 
@@ -336,6 +367,18 @@ export default {
   border-radius: 8px;
   padding: 10px;
   background-color: #fff;
+}
+
+.calendar_toggle_btn{
+display: unset !important;
+border-radius: 4px;
+  background: #449ff4;
+  padding: 3px 7px;
+  font-size: 12px;
+  color: #fff;
+  font-weight: 700;
+  /* display: flex; */
+  margin-left: 10px;
 }
 
 .new_calendar_date_picker_arrows {
