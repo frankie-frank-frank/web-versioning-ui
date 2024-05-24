@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="toggleDatePickerVisibility">{{ showDatePicker ? 'Close Calendar' : 'Open Calendar' }}</button> <br><br>
+    <button @click="toggleDatePickerVisibility">{{ appliedDateRange }}</button> <br><br>
     <div class="new_calendar_date_range_picker" v-show="showDatePicker">
       <div class="new_calendar_header">
         <div class="new_calendar_input_wrapper">
@@ -96,7 +96,7 @@
         </p>
       </div>
       <div class="new_calendar_apply_button_wrapper">
-        <button class="new_calendar_apply_button">Apply </button>
+        <button @click="applyDateRange" class="new_calendar_apply_button">Apply</button>
       </div>
     </div>
   </div>
@@ -111,6 +111,7 @@ export default {
     const startDate = ref(null);
     const endDate = ref(null);
     const dateRange = ref('');
+    const appliedDateRange = ref(''); // New state variable to hold the applied date range
     const today = new Date();
 
     const startMonthIndex = ref(today.getMonth());
@@ -142,6 +143,7 @@ export default {
       startDate.value = start;
       endDate.value = end;
       dateRange.value = `${formatDate(start)} - ${formatDate(end)}`;
+      appliedDateRange.value = dateRange.value; // Initialize appliedDateRange
       updateBookedDaysCount();
     });
 
@@ -171,9 +173,8 @@ export default {
     };
 
     const isHighlighted = (day, monthIndex) => {
-      if (!startDate.value || !endDate.value) return false;
-      const currentDate = new Date(startYear.value, monthIndex, day);
-      return currentDate >= startDate.value && currentDate <= endDate.value;
+      const selectedDate = new Date(startYear.value, monthIndex, day);
+      return startDate.value && endDate.value && selectedDate > startDate.value && selectedDate < endDate.value;
     };
 
     const isStartDate = (day, monthIndex) => {
@@ -279,11 +280,17 @@ export default {
       }
     };
 
+    const applyDateRange = () => {
+      appliedDateRange.value = dateRange.value; // Update appliedDateRange on apply
+      showDatePicker.value = false;
+    };
+
     return {
       showDatePicker,
       startDate,
       endDate,
       dateRange,
+      appliedDateRange, // Return appliedDateRange
       startMonth,
       endMonth,
       dayNames,
@@ -311,10 +318,15 @@ export default {
       showTooltip,
       hideTooltip,
       handleDateInput,
+      applyDateRange,
     };
   },
 };
 </script>
+
+
+
+
 <style>
 .new_calendar_date_range_picker {
   flex-direction: column;
