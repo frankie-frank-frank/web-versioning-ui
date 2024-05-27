@@ -316,26 +316,6 @@ const appliedBookedDaysCount = computed(() => {
   return bookedDates.value.filter(bookedDate => bookedDate >= start && bookedDate <= end).length;
 });
 
-/* const appliedHasBookedDaysInRange = computed(() => {
-  if (!startDate.value || !endDate.value) {
-    return false;
-  }
-
-  return bookedDates.value.some(bookedDate => 
-    bookedDate >= startDate.value && bookedDate <= endDate.value
-  );
-});
-
-const appliedBookedDaysCount = computed(() => {
-  if (!startDate.value || !endDate.value) {
-    return 0;
-  }
-
-  return bookedDates.value.filter(bookedDate => 
-    bookedDate >= startDate.value && bookedDate <= endDate.value
-  ).length;
-}); */
-
     return {
       showDatePicker,
       startDate,
